@@ -1,0 +1,42 @@
+{
+	"name": "jiripudil/otp",
+	"description": "Library that generates and verifies one-time passwords.",
+	"keywords": ["security", "authentication", "2fa", "hotp", "totp"],
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Jiří Pudil",
+			"email": "me@jiripudil.cz",
+			"homepage": "https://jiripudil.cz"
+		}
+	],
+	"require": {
+		"php": "^8.1",
+		"paragonie/constant_time_encoding": "^2.0"
+	},
+	"require-dev": {
+		"nette/tester": "^2.4",
+		"mockery/mockery": "^1.5",
+		"phpstan/phpstan": "^1.6"
+	},
+	"autoload": {
+		"psr-4": {
+			"JiriPudil\\OTP\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"JiriPudil\\OTP\\": "tests/"
+		}
+	},
+	"scripts": {
+		"phpstan": "phpstan analyze",
+		"tests": "tester -C tests",
+		"tests-with-coverage": "tester -C --coverage coverage.xml --coverage-src src/ tests/"
+	},
+	"prefer-stable": true,
+	"config": {
+		"sort-packages": true
+	}
+}
