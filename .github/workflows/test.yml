@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  tests:
+  tests-81:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,6 +17,17 @@ jobs:
       - run: composer install --no-interaction
       - run: composer run tests-with-coverage
       - uses: codecov/codecov-action@v3
+
+  tests-82:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+      - run: composer install --no-interaction
+      - run: composer run tests
 
   phpstan:
     runs-on: ubuntu-latest
