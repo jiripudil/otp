@@ -42,7 +42,7 @@ final class OTPTest extends TestCase
 		$totp = new OTP('TestIssuer', new TimeBasedOTP());
 		$totpUri = $totp->getProvisioningUri($account);
 		Assert::same(
-			'otpauth://totp/TestIssuer:AccountName?secret=JBSWY3DPEHPK3PXP&issuer=TestIssuer&algorithm=sha1&digits=6&period=30',
+			'otpauth://totp/TestIssuer:AccountName?secret=JBSWY3DPEHPK3PXP&issuer=TestIssuer&algorithm=SHA1&digits=6&period=30',
 			$totpUri,
 		);
 	}
@@ -65,7 +65,7 @@ final class OTPTest extends TestCase
 		$hotp = new OTP('TestIssuer', new HmacBasedOTP($counterRepository));
 		$hotpUri = $hotp->getProvisioningUri($account);
 		Assert::same(
-			'otpauth://hotp/TestIssuer:AccountName?secret=JBSWY3DPEHPK3PXP&issuer=TestIssuer&algorithm=sha1&digits=6&counter=42',
+			'otpauth://hotp/TestIssuer:AccountName?secret=JBSWY3DPEHPK3PXP&issuer=TestIssuer&algorithm=SHA1&digits=6&counter=42',
 			$hotpUri,
 		);
 	}

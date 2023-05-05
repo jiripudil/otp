@@ -15,6 +15,7 @@ use function rawurlencode;
 use function sprintf;
 use function str_pad;
 use function strlen;
+use function strtoupper;
 use const PHP_QUERY_RFC3986;
 use const STR_PAD_LEFT;
 
@@ -56,7 +57,7 @@ final class OTP
 		$query = http_build_query([
 			'secret' => $account->getSecret()->asBase32(),
 			'issuer' => $this->issuer,
-			'algorithm' => $this->algorithm->value,
+			'algorithm' => strtoupper($this->algorithm->value),
 			'digits' => $digits,
 			...$this->otp->getParameters($account),
 		], encoding_type: PHP_QUERY_RFC3986);
