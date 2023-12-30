@@ -6,36 +6,41 @@ on:
     branches: [main]
 
 jobs:
-  tests-81:
+  tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: ['8.1', '8.2', '8.3']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
-          coverage: pcov
-      - run: composer install --no-interaction
-      - run: composer run tests-with-coverage
-      - uses: codecov/codecov-action@v3
-
-  tests-82:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
+          php-version: ${{ matrix.php-version }}
           coverage: none
       - run: composer install --no-interaction
       - run: composer run tests
 
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: pcov
+      - run: composer install --no-interaction
+      - run: composer run tests-with-coverage
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   phpstan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.3'
           coverage: none
       - run: composer install --no-interaction
       - run: composer run phpstan
