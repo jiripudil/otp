@@ -30,7 +30,7 @@ jobs:
           coverage: pcov
       - run: composer install --no-interaction
       - run: composer run tests-with-coverage
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
