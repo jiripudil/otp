@@ -9,7 +9,7 @@ OTP is a library that generates and verifies One-Time Passwords conforming to th
 $ composer require jiripudil/otp
 ```
 
-OTP requires PHP >= 8.1.
+OTP requires PHP >= 8.2.
 
 
 ## Usage
@@ -29,12 +29,16 @@ It expects you to provide:
 
 ### Time-based OTP
 
-The `JiriPudil\OTP\TimeBasedOtp` class implements the TOTP according to RFC 6238 and it is perhaps the most commonly used type of OTPs. It generates a code in a fixed-time interval that defaults to 30 seconds. ⚠ While the interval can be changed, again, some end-user implementations do not support different intervals than the default.
+The `JiriPudil\OTP\TimeBasedOtp` class implements the TOTP according to RFC 6238 and it is perhaps the most commonly used type of OTPs. It generates a code in a fixed-time interval.
 
-Using time-based OTPs requires the clocks on your server and in the user's application to be in sync. To compensate for the possible differences between the times, you can provide an optional `$tolerance` which determines how many time periods before and after the current time should be considered valid. It defaults to 1, which means that the code for the previous and the next period will pass the verification.
+The constructor expects you to provide an implementation of `Psr\Clock\ClockInterface`.
+
+Using time-based OTPs requires the clocks on your server and in the user's application to be in sync. To compensate for the possible differences between the times, you can provide an optional `tolerance` which determines how many time periods before and after the current time should be considered valid. It defaults to 1, which means that the code for the previous and the next period will pass the verification.
+
+You can also configure the time interval which defaults to 30 seconds. ⚠ While the interval can be changed, again, some end-user implementations do not support different intervals than the default.
 
 ```php
-$otpType = new JiriPudil\OTP\TimeBasedOTP();
+$otpType = new JiriPudil\OTP\TimeBasedOTP($clock, tolerance: 1, timeStep: 30);
 ```
 
 
@@ -45,7 +49,7 @@ The `JiriPudil\OTP\HmacBasedOTP` class implements the HOTP according to RFC 4226
 The user's counter is incremented every time they request a new code, while the server's counter is only incremented after a successful verification attempt. To account for a possible desynchronization of the counter value, you can configure a `$lookAhead` parameter which tells this library to check several subsequent counter values. This parameter defaults to 3.
 
 ```php
-$otpType = new JiriPudil\OTP\HmacBasedOTP($myCounterRepository);
+$otpType = new JiriPudil\OTP\HmacBasedOTP($myCounterRepository, lookAhead: 3);
 ```
 
 
