@@ -4,29 +4,29 @@ declare(strict_types=1);
 
 namespace JiriPudil\OTP;
 
-use JiriPudil\OTP\Infrastructure\Random\NativeRandomBytesGenerator;
-use JiriPudil\OTP\Infrastructure\Random\RandomBytesGenerator;
 use ParagonIE\ConstantTime\Base32;
 use ParagonIE\ConstantTime\Hex;
+use Random\CryptoSafeEngine;
+use Random\Engine;
+use Random\Randomizer;
 
-final class Secret
+final readonly class Secret
 {
 	private function __construct(
-		private readonly string $secret,
-	)
-	{
-	}
+		private string $secret,
+	) {}
 
 	public static function random(
 		int $length,
-		RandomBytesGenerator $randomBytesGenerator = new NativeRandomBytesGenerator(),
+		CryptoSafeEngine $engine = new Engine\Secure(),
 	): self
 	{
 		if ($length < 1) {
 			throw new InvalidArgumentException("Secret length must be a positive integer, $length given.");
 		}
 
-		return new self($randomBytesGenerator->generate($length));
+		$randomizer = new Randomizer($engine);
+		return new self($randomizer->getBytes($length));
 	}
 
 	public static function fromBinary(string $secret): self

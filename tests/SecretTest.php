@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace JiriPudil\OTP;
 
-use JiriPudil\OTP\Infrastructure\Random\RandomBytesGenerator;
+use Random\CryptoSafeEngine;
 use Tester\Assert;
 use Tester\TestCase;
-use function str_repeat;
 
 require __DIR__ . '/bootstrap.php';
 
@@ -16,22 +15,22 @@ require __DIR__ . '/bootstrap.php';
  */
 final class SecretTest extends TestCase
 {
-	private RandomBytesGenerator $randomBytesGenerator;
+	private CryptoSafeEngine $randomEngine;
 
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->randomBytesGenerator = new class implements RandomBytesGenerator {
-			public function generate(int $length): string
+		$this->randomEngine = new class implements CryptoSafeEngine {
+			public function generate(): string
 			{
-				return str_repeat("\x42", $length);
+				return "\x42";
 			}
 		};
 	}
 
 	public function testSecret(): void
 	{
-		$secret = Secret::random(20, $this->randomBytesGenerator);
+		$secret = Secret::random(20, $this->randomEngine);
 		Assert::same('BBBBBBBBBBBBBBBBBBBB', $secret->asBinary());
 		Assert::same('IJBEEQSCIJBEEQSCIJBEEQSCIJBEEQSC', $secret->asBase32());
 		Assert::same('4242424242424242424242424242424242424242', $secret->asHex());

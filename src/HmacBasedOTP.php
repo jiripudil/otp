@@ -11,17 +11,15 @@ use JiriPudil\OTP\HmacBasedOTP\CounterRepository;
 /**
  * @template AD of AccountDescriptor
  */
-final class HmacBasedOTP implements OTPType
+final readonly class HmacBasedOTP implements OTPType
 {
 	/**
 	 * @param CounterRepository<AD> $counterRepository
 	 */
 	public function __construct(
-		private readonly CounterRepository $counterRepository,
-		private readonly int $lookAhead = 3,
-	)
-	{
-	}
+		private CounterRepository $counterRepository,
+		private int $lookAhead = 3,
+	) {}
 
 	public function describe(): string
 	{

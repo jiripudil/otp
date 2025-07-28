@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['8.1', '8.2', '8.3', '8.4']
+        php-version: ['8.2', '8.3', '8.4']
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           coverage: pcov
       - run: composer install --no-interaction
       - run: composer run tests-with-coverage
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           coverage: none
       - run: composer install --no-interaction
       - run: composer run phpstan

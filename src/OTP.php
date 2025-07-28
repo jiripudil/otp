@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace JiriPudil\OTP;
 
 use JiriPudil\OTP\Account\AccountDescriptor;
-use JiriPudil\OTP\Infrastructure\Random\NativeRandomBytesGenerator;
-use JiriPudil\OTP\Infrastructure\Random\RandomBytesGenerator;
+use Random\CryptoSafeEngine;
+use Random\Engine;
 use function hash_equals;
 use function http_build_query;
 use function ord;
@@ -19,26 +19,24 @@ use function strtoupper;
 use const PHP_QUERY_RFC3986;
 use const STR_PAD_LEFT;
 
-final class OTP
+final readonly class OTP
 {
 	private const MIN_DIGITS = 6;
 	private const MAX_DIGITS = 8;
 
 	public function __construct(
-		private readonly string $issuer,
-		private readonly OTPType $otp,
-		private readonly Algorithm $algorithm = Algorithm::Sha1,
-	)
-	{
-	}
+		private string $issuer,
+		private OTPType $otp,
+		private Algorithm $algorithm = Algorithm::Sha1,
+	) {}
 
 	public function generateSecret(
-		RandomBytesGenerator $randomBytesGenerator = new NativeRandomBytesGenerator(),
+		CryptoSafeEngine $engine = new Engine\Secure(),
 	): Secret
 	{
 		return Secret::random(
 			$this->algorithm->minSecretLength(),
-			$randomBytesGenerator,
+			$engine,
 		);
 	}
 
