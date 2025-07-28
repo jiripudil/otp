@@ -82,7 +82,8 @@ final class OTP
 		$value = $generator->current();
 		$generator->send(true);
 
-		return $this->generateOneTimePassword($value, $account->getSecret(), $digits);
+		// skip length check because an OTP client does not have control over the secret length and some providers only use 10 bytes
+		return $this->generateOneTimePassword($value, $account->getSecret(), $digits, skipLengthCheck: true);
 	}
 
 	/**
@@ -131,10 +132,11 @@ final class OTP
 		int $value,
 		Secret $secret,
 		int $digits,
+		bool $skipLengthCheck = false,
 	): string
 	{
 		$packedValue = pack('J*', $value);
-		$hash = $this->algorithm->hash($packedValue, $secret);
+		$hash = $this->algorithm->hash($packedValue, $secret, $skipLengthCheck);
 		$offset = ord($hash[strlen($hash) - 1]) & 0xf;
 
 		$code = (

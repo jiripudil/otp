@@ -14,9 +14,9 @@ enum Algorithm: string
 	case Sha256 = 'sha256';
 	case Sha512 = 'sha512';
 
-	public function hash(string $value, Secret $secret): string
+	public function hash(string $value, Secret $secret, bool $skipLengthCheck): string
 	{
-		if (strlen($secret->asBinary()) < $this->minSecretLength()) {
+		if (!$skipLengthCheck && strlen($secret->asBinary()) < $this->minSecretLength()) {
 			throw new InvalidArgumentException(sprintf(
 				"Secret is too short (%d bytes), at least %d bytes should be provided for algorithm %s.",
 				strlen($secret->asBinary()),
