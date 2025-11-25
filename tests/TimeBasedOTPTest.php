@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JiriPudil\OTP;
 
 use JiriPudil\OTP\Account\SimpleAccountDescriptor;
-use JiriPudil\OTP\Infrastructure\Time\Clock;
+use Symfony\Component\Clock\MockClock;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -18,12 +18,9 @@ final class TimeBasedOTPTest extends TestCase
 {
 	public function testTimeBasedOtp(): void
 	{
-		$totp = new TimeBasedOTP(clock: new class implements Clock {
-			public function getTime(): float
-			{
-				return 1653121000.0;
-			}
-		});
+		$utc = new \DateTimeZone('UTC');
+		$clock = new MockClock(new \DateTimeImmutable('@1653121000', $utc), $utc);
+		$totp = new TimeBasedOTP($clock);
 
 		$account = new SimpleAccountDescriptor('AccountName', Secret::random(20));
 

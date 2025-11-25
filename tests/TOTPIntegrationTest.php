@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JiriPudil\OTP;
 
 use JiriPudil\OTP\Account\SimpleAccountDescriptor;
-use JiriPudil\OTP\Infrastructure\Time\Clock;
+use Symfony\Component\Clock\MockClock;
 use Tester\Assert;
 use Tester\TestCase;
 use function str_repeat;
@@ -19,14 +19,12 @@ final class TOTPIntegrationTest extends TestCase
 {
 	public function testGenerate(): void
 	{
+		$utc = new \DateTimeZone('UTC');
+		$clock = new MockClock(new \DateTimeImmutable('@1653121000', $utc), $utc);
+
 		$authenticator = new OTP(
 			'MyIssuer',
-			new TimeBasedOTP(clock: new class implements Clock {
-				public function getTime(): float
-				{
-					return 1653121000.0;
-				}
-			}),
+			new TimeBasedOTP($clock),
 		);
 
 		$account = new SimpleAccountDescriptor('AccountName', Secret::fromBinary(str_repeat("\x42", 20)));
@@ -39,14 +37,12 @@ final class TOTPIntegrationTest extends TestCase
 
 	public function testVerify(): void
 	{
+		$utc = new \DateTimeZone('UTC');
+		$clock = new MockClock(new \DateTimeImmutable('@1653121000', $utc), $utc);
+
 		$authenticator = new OTP(
 			'MyIssuer',
-			new TimeBasedOTP(clock: new class implements Clock {
-				public function getTime(): float
-				{
-					return 1653121000.0;
-				}
-			}),
+			new TimeBasedOTP($clock),
 		);
 
 		$account = new SimpleAccountDescriptor('AccountName', Secret::fromBinary(str_repeat("\x42", 20)));

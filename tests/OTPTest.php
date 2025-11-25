@@ -8,6 +8,7 @@ use Generator;
 use JiriPudil\OTP\Account\AccountDescriptor;
 use JiriPudil\OTP\Account\SimpleAccountDescriptor;
 use JiriPudil\OTP\HmacBasedOTP\CounterRepository;
+use Symfony\Component\Clock\NativeClock;
 use Tester\Assert;
 use Tester\TestCase;
 use function str_repeat;
@@ -22,15 +23,15 @@ final class OTPTest extends TestCase
 {
 	public function testGenerateSecret(): void
 	{
-		$sha1 = new OTP('TestIssuer', new TimeBasedOTP(), Algorithm::Sha1);
+		$sha1 = new OTP('TestIssuer', new TimeBasedOTP(new NativeClock(new \DateTimeZone('UTC'))), Algorithm::Sha1);
 		$sha1Secret = $sha1->generateSecret();
 		Assert::same(20, strlen($sha1Secret->asBinary()));
 
-		$sha256 = new OTP('TestIssuer', new TimeBasedOTP(), Algorithm::Sha256);
+		$sha256 = new OTP('TestIssuer', new TimeBasedOTP(new NativeClock(new \DateTimeZone('UTC'))), Algorithm::Sha256);
 		$sha256Secret = $sha256->generateSecret();
 		Assert::same(32, strlen($sha256Secret->asBinary()));
 
-		$sha512 = new OTP('TestIssuer', new TimeBasedOTP(), Algorithm::Sha512);
+		$sha512 = new OTP('TestIssuer', new TimeBasedOTP(new NativeClock(new \DateTimeZone('UTC'))), Algorithm::Sha512);
 		$sha512Secret = $sha512->generateSecret();
 		Assert::same(64, strlen($sha512Secret->asBinary()));
 	}
@@ -39,7 +40,7 @@ final class OTPTest extends TestCase
 	{
 		$account = new SimpleAccountDescriptor('AccountName', Secret::fromBase32('JBSWY3DPEHPK3PXP'));
 
-		$totp = new OTP('TestIssuer', new TimeBasedOTP());
+		$totp = new OTP('TestIssuer', new TimeBasedOTP(new NativeClock(new \DateTimeZone('UTC'))));
 		$totpUri = $totp->getProvisioningUri($account);
 		Assert::same(
 			'otpauth://totp/TestIssuer:AccountName?secret=JBSWY3DPEHPK3PXP&issuer=TestIssuer&algorithm=SHA1&digits=6&period=30',

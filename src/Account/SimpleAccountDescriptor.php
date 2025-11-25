@@ -6,14 +6,12 @@ namespace JiriPudil\OTP\Account;
 
 use JiriPudil\OTP\Secret;
 
-final class SimpleAccountDescriptor implements AccountDescriptor
+final readonly class SimpleAccountDescriptor implements AccountDescriptor
 {
 	public function __construct(
-		private readonly string $accountName,
-		private readonly Secret $secret,
-	)
-	{
-	}
+		private string $accountName,
+		private Secret $secret,
+	) {}
 
 	public function getAccountName(): string
 	{

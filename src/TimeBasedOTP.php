@@ -6,19 +6,16 @@ namespace JiriPudil\OTP;
 
 use Generator;
 use JiriPudil\OTP\Account\AccountDescriptor;
-use JiriPudil\OTP\Infrastructure\Time\Clock;
-use JiriPudil\OTP\Infrastructure\Time\SystemClock;
+use Psr\Clock\ClockInterface;
 use function floor;
 
-final class TimeBasedOTP implements OTPType
+final readonly class TimeBasedOTP implements OTPType
 {
 	public function __construct(
-		private readonly int $tolerance = 1,
-		private readonly int $timeStep = 30,
-		private readonly Clock $clock = new SystemClock(),
-	)
-	{
-	}
+		private ClockInterface $clock,
+		private int $tolerance = 1,
+		private int $timeStep = 30,
+	) {}
 
 	public function describe(): string
 	{
@@ -34,14 +31,16 @@ final class TimeBasedOTP implements OTPType
 
 	public function generateValues(AccountDescriptor $account): Generator
 	{
-		$timestamp = floor($this->clock->getTime() / $this->timeStep);
+		$now = $this->clock->now();
+
+		$timestamp = floor($now->getTimestamp() / $this->timeStep);
 		yield (int) $timestamp;
 
 		for ($offset = 1; $offset <= $this->tolerance; $offset++) {
-			$timestamp = floor(($this->clock->getTime() - ($offset * $this->timeStep)) / $this->timeStep);
+			$timestamp = floor(($now->getTimestamp() - ($offset * $this->timeStep)) / $this->timeStep);
 			yield (int) $timestamp;
 
-			$timestamp = floor(($this->clock->getTime() + ($offset * $this->timeStep)) / $this->timeStep);
+			$timestamp = floor(($now->getTimestamp() + ($offset * $this->timeStep)) / $this->timeStep);
 			yield (int) $timestamp;
 		}
 	}
